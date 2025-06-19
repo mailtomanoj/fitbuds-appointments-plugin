@@ -1,0 +1,62 @@
+/* Admin dashboard styles */
+.wrap {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+form {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+form:hover {
+    transform: translateY(-2px);
+}
+
+input[type="text"], input[type="password"], input[type="color"] {
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+button[type="submit"] {
+    background: #2563eb;
+    transition: all 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    font-family: 'Inter', sans-serif;
+}
+
+label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.notice-success {
+    border-left-color: #10b981;
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.mb-8 {
+    animation: slideIn 0.5s ease-out;
+}

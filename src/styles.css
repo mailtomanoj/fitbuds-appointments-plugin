@@ -1,0 +1,126 @@
+/* Custom styles for react-calendar */
+.react-calendar {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5em;
+    border-radius: 1rem;
+    font-size: 1.2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.react-calendar__tile--active {
+    background: var(--primary-color, #2563eb) !important;
+    color: white !important;
+    border-radius: 6px;
+}
+
+.react-calendar__tile--now {
+    background: #e0f2fe;
+    border-radius: 6px;
+}
+
+.react-calendar__tile--disabled {
+    background: #f3f4f6;
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.react-calendar__navigation__label {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.react-calendar__month-view__days__day--weekend {
+    color: #1f2937;
+}
+
+.react-calendar__tile {
+    padding: 1.5rem;
+    font-size: 1.2rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.react-calendar__tile:hover:not(.react-calendar__tile--disabled) {
+    transform: scale(1.05);
+}
+
+/* Ensure Tailwind styles work with custom components */
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Payment gateway styles */
+.payment-gateway {
+    transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+}
+
+.payment-gateway:hover {
+    transform: translateY(-2px);
+}
+
+/* Global styles */
+:root {
+    --primary-color: '#2563eb';
+}
+
+/* Button hover effects */
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Input focus effects */
+input:focus,
+select:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Accessibility improvements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.entry-content p {
+    margin-bottom: 0.1em;
+}
+
+
+.entry-content h1,
+.entry-content h2,
+.entry-content h3,
+.entry-content h4,
+.entry-content h5,
+.entry-content h6 {
+    margin-bottom: 5px;
+}
