@@ -259,6 +259,21 @@ const App = () => {
     }
   };
 
+  const createRazorpayOrder = async (amount) => {
+    const response = await fetch(`${ajaxUrl}?action=fitbuds_create_razorpay_order`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        amount: amount * 100
+      })
+    });
+    const data = await response.json();
+    if (!data.success) throw new Error(data.data.message || 'Order creation failed');
+    return data.data.order_id;
+  };
+
   const handlePaymentRequest = async (gatewayId, gatewayName) => {
     setLoading(true);
     try {
@@ -268,10 +283,13 @@ const App = () => {
         order_id: checkoutData.order.id
       }, apiBaseUrl, apiKey, serverToken);
       if (gatewayName === 'Razorpay') {
+        const razorpayOrderId = await createRazorpayOrder(checkoutData.amounts.total);
+        console.log('Razorpay Order ID:', razorpayOrderId);
         initiateRazorpayPayment(gatewayId, gatewayName, {
           key: razorpayKeyId,
           amount: checkoutData.amounts.total * 100,
           currency: 'INR',
+          order_id: razorpayOrderId,
           name: 'FitBuds Appointments',
           description: `Appointment with ${selectedDoctor.full_name}`,
           image: selectedDoctor.avatar,

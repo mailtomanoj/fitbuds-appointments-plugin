@@ -27,6 +27,7 @@ function fitbuds_appointments_settings_page() {
         check_admin_referer('fitbuds_appointments_settings');
 
         update_option('fitbuds_appointments_enabled', isset($_POST['fitbuds_appointments_enabled']) ? '1' : '0');
+        update_option('fitbuds_api_url', sanitize_text_field($_POST['fitbuds_api_url']));
         update_option('fitbuds_api_key', sanitize_text_field($_POST['fitbuds_api_key']));
         update_option('fitbuds_razorpay_key_id', sanitize_text_field($_POST['fitbuds_razorpay_key_id']));
         update_option('fitbuds_razorpay_secret', sanitize_text_field($_POST['fitbuds_razorpay_secret']));

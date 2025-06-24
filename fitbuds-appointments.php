@@ -2,7 +2,7 @@
 /*
 Plugin Name: FitBuds Appointments
 Description: An advanced WordPress plugin for booking appointments with API-based category and doctor selection, including Razorpay and PayPal payments.
-Version: 1.2.2
+Version: 1.2.3
 Author: Manoj Kumar
 License: GPL2
 */
@@ -75,13 +75,13 @@ add_action('wp_enqueue_scripts', 'fitbuds_appointments_enqueue_scripts');
 // Admin scripts and styles
 function fitbuds_appointments_admin_enqueue_scripts($hook)
 {
-    if ($hook !== 'settings_page_fitbuds-appointments') {
-        return;
+    if (strpos($hook, 'user-dashboard') !== false || $hook === 'settings_page_fitbuds-appointments') {
+        wp_enqueue_style('tailwindcss', 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css', [], '2.2.19');
+        wp_enqueue_style('fitbuds-admin-css', FITBUDS_APPOINTMENTS_URL . 'assets/admin-styles.css', ['tailwindcss'], '1.2.2');
+        wp_enqueue_script('fitbuds-admin-js', FITBUDS_APPOINTMENTS_URL . 'assets/admin-scripts.js', [], '1.2.2', true);
     }
-    wp_enqueue_style('tailwindcss', 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css', [], '2.2.19');
-    wp_enqueue_style('fitbuds-admin-css', FITBUDS_APPOINTMENTS_URL . 'assets/admin-styles.css', ['tailwindcss'], '1.2.2');
-    wp_enqueue_script('fitbuds-admin-js', FITBUDS_APPOINTMENTS_URL . 'assets/admin-scripts.js', [], '1.2.2', true);
 }
+
 add_action('admin_enqueue_scripts', 'fitbuds_appointments_admin_enqueue_scripts');
 
 // Register shortcode
@@ -111,11 +111,92 @@ register_activation_hook(__FILE__, 'fitbuds_appointments_activate');
 // Deactivation hook
 function fitbuds_appointments_deactivate()
 {
-    // Clean up if needed
+    delete_option('fitbuds_appointments_enabled');
+    delete_option('fitbuds_primary_color');
 }
 register_deactivation_hook(__FILE__, 'fitbuds_appointments_deactivate');
 
+
+function add_user_custom_dashboard_menu()
+{
+    add_menu_page(
+        'FitBuds',
+        'FitBuds',
+        'read',
+        'user-dashboard',
+        'user_dashboard_main_page',
+        'dashicons-admin-users',
+        2
+    );
+
+    add_submenu_page(
+        'user-dashboard',
+        'My Bookings',
+        'My Bookings',
+        'read',
+        'user-dashboard-bookings',
+        'user_dashboard_bookings_page'
+    );
+}
+add_action('admin_menu', 'add_user_custom_dashboard_menu');
+
+function user_dashboard_main_page()
+{
+    if (!current_user_can('read')) {
+        wp_die('You do not have sufficient permissions to access this page.');
+    }
+    include FITBUDS_APPOINTMENTS_DIR . 'includes/user-dashboard.php';
+}
+
+function user_dashboard_bookings_page()
+{
+    if (!current_user_can('read')) {
+        wp_die('You do not have sufficient permissions to access this page.');
+    }
+    include FITBUDS_APPOINTMENTS_DIR . 'includes/user-dashboard-bookings.php';
+}
+
+function user_dashboard_profile_page()
+{
+    if (!current_user_can('read')) {
+        wp_die('You do not have sufficient permissions to access this page.');
+    }
+    include FITBUDS_APPOINTMENTS_DIR . 'includes/user-dashboard-profile.php';
+}
 // cutoms
+
+
+add_action('wp_ajax_fitbuds_create_razorpay_order', 'fitbuds_create_razorpay_order');
+add_action('wp_ajax_nopriv_fitbuds_create_razorpay_order', 'fitbuds_create_razorpay_order');
+
+function fitbuds_create_razorpay_order()
+{
+    require_once FITBUDS_APPOINTMENTS_DIR . 'vendor/autoload.php';
+
+    $key_id = get_option('fitbuds_razorpay_key_id', '');
+    $key_secret = get_option('fitbuds_razorpay_secret', '');
+
+    $amount = isset($_POST['amount']) ? intval($_POST['amount']) : 0;
+
+    if (!$amount || !$key_id || !$key_secret) {
+        wp_send_json_error(['message' => 'Missing Razorpay credentials or amount']);
+    }
+
+    try {
+        $api = new \Razorpay\Api\Api($key_id, $key_secret);
+        $order = $api->order->create([
+            'receipt' => 'fitbuds_' . time(),
+            'amount' => $amount,
+            'currency' => 'INR',
+            'payment_capture' => 0
+        ]);
+        wp_send_json_success(['order_id' => $order['id']]);
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => 'Error creating Razorpay order', 'error' => $e->getMessage()]);
+    }
+}
+
+// User Creating update operation
 add_action('wp_ajax_fitbuds_store_user_id', 'fitbuds_store_user_id_callback');
 add_action('wp_ajax_nopriv_fitbuds_store_user_id', 'fitbuds_store_user_id_callback');
 

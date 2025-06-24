@@ -59,22 +59,6 @@ export const fetchTimeslots = async (doctorId, authId, apiBaseUrl, apiKey) => {
  * @returns {Promise<Object|null>}
  */
 
-// export const registerUser = async (userData, apiBaseUrl, apiKey, ajaxUrl, isLoggedIn) => {
-//   console.log('Registering user:', userData);
-//   console.log(isLoggedIn ? 'User is logged in' : 'User is not logged in');
-//   try {
-//     const response = await axios.post(fitbudsAppointmentSettings.ajaxUrl, new URLSearchParams({
-//       action: 'fitbuds_store_user_id',
-//       user_id: userData.user_id,
-//       token: userData.token,
-//     }));
-
-//     console.log('AJAX success:', response.data);
-//   } catch (error) {
-//     console.error('AJAX error:', error.response?.data || error);
-//   }
-// };
-
 export const checkUserExistsinApi = async (payload, apiBaseUrl, apiKey) => {
   try {
     const response = await axios.post(`${apiBaseUrl}/user/is_registered`, payload, {
