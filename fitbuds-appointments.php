@@ -2,7 +2,7 @@
 /*
 Plugin Name: FitBuds Appointments
 Description: An advanced WordPress plugin for booking appointments with API-based category and doctor selection, including Razorpay and PayPal payments.
-Version: 1.2.3
+Version: 1.2.4
 Author: Manoj Kumar
 License: GPL2
 */

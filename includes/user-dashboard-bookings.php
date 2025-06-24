@@ -49,7 +49,7 @@ if ($server_user_id && $api_base_url && $api_key) {
     <p class="text-gray-600 mb-8">Here are your appointment reservations:</p>
 
     <?php if ($error_message): ?>
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-2 rounded mb-6">
             <p class="font-medium">Error: <?php echo esc_html($error_message); ?></p>
         </div>
     <?php elseif (empty($reservations)): ?>
@@ -57,10 +57,10 @@ if ($server_user_id && $api_base_url && $api_key) {
             <p class="font-medium">No reservations found.</p>
         </div>
     <?php else: ?>
-        <div class="space-y-6">
+        <div class="space-y-2">
             <?php foreach ($reservations as $reservation): ?>
-                <div class="bg-white p-6 rounded shadow border border-gray-200">
-                    <div class="flex items-center justify-between mb-4">
+                <div class="bg-white p-4 rounded shadow border border-gray-200">
+                    <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800">Meeting with <?php echo esc_html($reservation['user']['full_name'] ?? 'N/A'); ?></h2>
                             <p class="text-sm text-gray-500">Status: 
@@ -70,17 +70,29 @@ if ($server_user_id && $api_base_url && $api_key) {
                                 </span>
                             </p>
                         </div>
-                        <?php if (!empty($reservation['user']['avatar'])): ?>
-                            <img src="<?php echo esc_url($reservation['user']['avatar']); ?>" alt="Avatar" class="w-12 h-12 rounded-full border border-gray-300">
-                        <?php endif; ?>
+                        <div class="flex flex-col items-center justify-center space-y-2">
+                            <?php if (!empty($reservation['user']['avatar'])): ?>
+                                <img src="<?php echo esc_url($reservation['user']['avatar']); ?>" alt="Avatar"
+                                    class="w-12 h-12 rounded-full border border-gray-300 mb-2 object-cover">
+                            <?php endif; ?>
+
+                            <?php if (!empty($reservation['link'])): ?>
+                                <a href="<?php echo esc_url($reservation['link']); ?>" target="_blank"
+                                class="inline-block bg-green-600 hover:bg-green-700 hover:text-white text-white text-sm font-medium px-4 py-2 rounded shadow 
+                                        transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    Join Meeting
+                                </a>
+                            <?php else: ?>
+                                <span class="text-gray-400 text-xs italic">No meeting link available</span>
+                            <?php endif; ?>
+                        </div>
+
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
                         <p><strong>Date:</strong> <?php echo date('d M Y', $reservation['date']); ?></p>
                         <p><strong>Day:</strong> <?php echo ucfirst($reservation['day']); ?></p>
                         <p><strong>Time:</strong> <?php echo esc_html($reservation['time']['start'] . ' - ' . $reservation['time']['end']); ?></p>
                         <p><strong>Students:</strong> <?php echo esc_html($reservation['student_count']); ?></p>
-                        <p><strong>Paid:</strong> $<?php echo esc_html($reservation['user_paid_amount']); ?></p>
-                        <p><strong>Amount:</strong> $<?php echo esc_html($reservation['amount']); ?></p>
                     </div>
                 </div>
             <?php endforeach; ?>
