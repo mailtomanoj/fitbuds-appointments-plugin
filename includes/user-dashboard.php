@@ -97,107 +97,129 @@ if ($server_user_id && $api_base_url && $api_key) {
             </div>
         </div>
 
-        <?php if (count($user_data['meta']) > 0) { ?>
-            <!-- Biometrics Section -->
+        <?php if (count($user_data['meta']) > 0 || !empty($user_data['referral'])) { ?>
+            <!-- Combined Section with Main Grid -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Biometrics Section -->
+                    <?php if (count($user_data['meta']) > 0) { ?>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                                Biometrics
+                            </h2>
+                            <!-- Inner grid for biometrics fields -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <?php
+                                $meta_fields = [
+                                    'dob' => 'Date of Birth',
+                                    'gender' => 'Gender',
+                                    'height' => 'Height',
+                                    'h_unit' => 'Height Unit',
+                                    'weight' => 'Weight',
+                                    'w_unit' => 'Weight Unit',
+                                    'bmi' => 'BMI',
+                                ];
+                                foreach ($user_data['meta'] as $meta) {
+                                    if (isset($meta_fields[$meta['name']])) {
+                                        echo '<p class="mb-2"><span class="font-medium text-gray-700">' . esc_html($meta_fields[$meta['name']]) . ':</span> ' . esc_html($meta['value']) . '</p>';
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <!-- Referral Section -->
+                    <?php if (!empty($user_data['referral'])) { ?>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Referral Program
+                            </h2>
+                            <p class="mb-2"><span class="font-medium text-gray-700">Referral Code:</span> <?php echo esc_html($user_data['referral']['code']); ?></p>
+                            <p class="mb-2"><span class="font-medium text-gray-700">Referral Link:</span> <a href="<?php echo esc_url($user_data['referral']['link']); ?>" class="text-blue-600 hover:underline" target="_blank"><?php echo esc_html($user_data['referral']['link']); ?></a></p>
+                            <p class="mb-2"><span class="font-medium text-gray-700">Leaderboard Rank:</span> <?php echo esc_html($user_data['leaderboard_rank']); ?></p>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php } ?>
+
+
+<?php if (!empty($user_data['piggybank']) || !empty($user_data['today_fitness_challenge']) || !empty($user_data['today_healthyplate']) || !empty($user_data['today_quiz_contest'])) { ?>
+    <!-- Combined Piggybank and Daily Challenges Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Piggybank Section -->
+            <?php if (!empty($user_data['piggybank'])) { ?>
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Piggybank
+                    </h2>
+                    <p class="mb-2"><span class="font-medium text-gray-700">Coins Available:</span> <?php echo esc_html($user_data['piggybank']['left_coins']); ?></p>
+                    <p class="mb-2"><span class="font-medium text-gray-700">Coins Earned:</span> <?php echo esc_html($user_data['piggybank']['earned_coins']); ?></p>
+                    <p class="mb-2"><span class="font-medium text-gray-700">Coins Spent:</span> <?php echo esc_html($user_data['piggybank']['spent_coins']); ?></p>
+                </div>
+            <?php } ?>
+
+            <!-- Daily Challenges Section -->
+            <div>
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
                     <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    Biometrics
+                    Daily Challenges
                 </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="space-y-2">
                     <?php
-                    $meta_fields = [
-                        'dob' => 'Date of Birth',
-                        'gender' => 'Gender',
-                        'height' => 'Height',
-                        'h_unit' => 'Height Unit',
-                        'weight' => 'Weight',
-                        'w_unit' => 'Weight Unit',
-                        'bmi' => 'BMI',
+                    $challenges = [
+                        'today_fitness_challenge' => 'Fitness Challenge',
+                        'today_healthyplate' => 'Healthy Plate',
+                        'today_quiz_contest' => 'Quiz Contest',
                     ];
-                    foreach ($user_data['meta'] as $meta) {
-                        if (isset($meta_fields[$meta['name']])) {
-                            echo '<p class="mb-2"><span class="font-medium text-gray-700">' . esc_html($meta_fields[$meta['name']]) . ':</span> ' . esc_html($meta['value']) . '</p>';
-                        }
-                    }
+
+                    foreach ($challenges as $key => $label):
+                        $challenge = $user_data[$key] ?? null;
                     ?>
+                        <div class="flex items-center justify-between bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-gray-700"><?php echo esc_html($label); ?></p>
+                                <p class="text-sm text-gray-500">
+                                    <?php
+                                    if (isset($challenge['is_completed'])) {
+                                        echo $challenge['is_completed'] ? 'Completed' : 'Not Completed';
+                                    } else {
+                                        echo 'Data not available';
+                                    }
+                                    ?>
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">
+                                    Coins Earned: <?php echo isset($challenge['coin_earned']) ? esc_html($challenge['coin_earned']) : '—'; ?>
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    Coins Left: <?php echo isset($challenge['left_coins']) ? esc_html($challenge['left_coins']) : '—'; ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
-        <?php } ?>
-
-        <!-- Referral Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Referral Program
-            </h2>
-            <p class="mb-2"><span class="font-medium text-gray-700">Referral Code:</span> <?php echo esc_html($user_data['referral']['code']); ?></p>
-            <p class="mb-2"><span class="font-medium text-gray-700">Referral Link:</span> <a href="<?php echo esc_url($user_data['referral']['link']); ?>" class="text-blue-600 hover:underline" target="_blank"><?php echo esc_html($user_data['referral']['link']); ?></a></p>
-            <p class="mb-2"><span class="font-medium text-gray-700">Leaderboard Rank:</span> <?php echo esc_html($user_data['leaderboard_rank']); ?></p>
         </div>
+    </div>
+<?php } ?>
 
-        <!-- Piggybank Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Piggybank
-            </h2>
-            <p class="mb-2"><span class="font-medium text-gray-700">Coins Available:</span> <?php echo esc_html($user_data['piggybank']['left_coins']); ?></p>
-            <p class="mb-2"><span class="font-medium text-gray-700">Coins Earned:</span> <?php echo esc_html($user_data['piggybank']['earned_coins']); ?></p>
-            <p class="mb-2"><span class="font-medium text-gray-700">Coins Spent:</span> <?php echo esc_html($user_data['piggybank']['spent_coins']); ?></p>
-        </div>
-
-        <!-- Daily Challenges Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
-                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Daily Challenges
-            </h2>
-            <div class="space-y-4">
-                <?php
-                $challenges = [
-                    'today_fitness_challenge' => 'Fitness Challenge',
-                    'today_healthyplate' => 'Healthy Plate',
-                    'today_quiz_contest' => 'Quiz Contest',
-                ];
-
-                foreach ($challenges as $key => $label):
-                    $challenge = $user_data[$key] ?? null;
-                ?>
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
-                            <p class="font-medium text-gray-700"><?php echo esc_html($label); ?></p>
-                            <p class="text-sm text-gray-500">
-                                <?php
-                                if (isset($challenge['is_completed'])) {
-                                    echo $challenge['is_completed'] ? 'Completed' : 'Not Completed';
-                                } else {
-                                    echo 'Data not available';
-                                }
-                                ?>
-                            </p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-gray-600">
-                                Coins Earned: <?php echo isset($challenge['coin_earned']) ? esc_html($challenge['coin_earned']) : '—'; ?>
-                            </p>
-                            <p class="text-sm text-gray-600">
-                                Coins Left: <?php echo isset($challenge['left_coins']) ? esc_html($challenge['left_coins']) : '—'; ?>
-                            </p>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
 
     <?php endif; ?>
 
